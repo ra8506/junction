@@ -17,10 +17,10 @@ Nothing goes through a third party unless you choose a hosted homeserver.
 Requires Docker Desktop. The bridges must keep running for messages to sync, so an
 always-on machine (home server, NAS, small VPS) works best; this PC is fine to try it.
 
-1. `cd bridges` and pick a server name (it becomes part of your Matrix ID, e.g. `@brian:home.local`):
-   `set SERVER_NAME=home.local` (PowerShell: `$env:SERVER_NAME="home.local"`).
-2. Generate the Synapse config:
-   `docker compose run --rm -e SYNAPSE_SERVER_NAME=%SERVER_NAME% synapse generate`
+1. `cd bridges` and pick a server name (it becomes part of your Matrix ID, e.g. `@brian:home.local`).
+   The commands below use `home.local`; replace it everywhere if you pick another.
+2. Generate the Synapse config (creates `data/synapse/homeserver.yaml`):
+   `docker compose run --rm -e SYNAPSE_SERVER_NAME=home.local -e SYNAPSE_REPORT_STATS=no synapse generate`
 3. Start each bridge once so it writes `data/<bridge>/config.yaml`, then stop it:
    `docker compose up whatsapp signal gmessages` then Ctrl+C.
 4. **Easiest:** run `node configure.mjs home.local brian` (your SERVER_NAME and username). It edits all
