@@ -1,0 +1,36 @@
+# Personal Matrix homeserver + mautrix bridges for Junction's Messaging tab.
+# Runs on Docker Desktop for Windows (or any always-on box: NAS, mini PC, VPS).
+# Pin these images to specific release tags once your setup works.
+# See docs/BRIDGES.md for the first-run steps (generate configs, register bridges).
+services:
+  synapse:
+    image: matrixdotorg/synapse:latest
+    restart: unless-stopped
+    environment:
+      SYNAPSE_SERVER_NAME: ${SERVER_NAME:-home.local}
+      SYNAPSE_REPORT_STATS: "no"
+    volumes:
+      - ./data/synapse:/data
+      - ./data/whatsapp:/bridges/whatsapp:ro
+      - ./data/signal:/bridges/signal:ro
+      - ./data/gmessages:/bridges/gmessages:ro
+    ports:
+      - "127.0.0.1:8008:8008"
+
+  whatsapp:
+    image: dock.mau.dev/mautrix/whatsapp:latest
+    restart: unless-stopped
+    volumes: ["./data/whatsapp:/data"]
+    depends_on: [synapse]
+
+  signal:
+    image: dock.mau.dev/mautrix/signal:latest
+    restart: unless-stopped
+    volumes: ["./data/signal:/data"]
+    depends_on: [synapse]
+
+  gmessages:
+    image: dock.mau.dev/mautrix/gmessages:latest
+    restart: unless-stopped
+    volumes: ["./data/gmessages:/data"]
+    depends_on: [synapse]
