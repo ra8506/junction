@@ -60,6 +60,10 @@ always-on machine (home server, NAS, small VPS) works best; this PC is fine to t
      - /bridges/signal/registration.yaml
      - /bridges/gmessages/registration.yaml
    ```
+   The bridges save `registration.yaml` readable only by themselves; let Synapse read them:
+   `docker run --rm -v "${PWD}\data:/d" alpine sh -c "chmod 755 /d/whatsapp /d/signal /d/gmessages && chmod 644 /d/*/registration.yaml"`
+   (rerun this whenever a bridge regenerates its registration; otherwise Synapse fails with
+   `PermissionError ... registration.yaml`).
 6. `docker compose up -d`, then create your user:
    `docker compose exec synapse register_new_matrix_user -c /data/homeserver.yaml http://localhost:8008 -u brian -a`
 7. In Junction > Messages, sign in to `http://localhost:8008` as that user.
