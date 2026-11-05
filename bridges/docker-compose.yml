@@ -6,9 +6,6 @@ services:
   synapse:
     image: matrixdotorg/synapse:latest
     restart: unless-stopped
-    environment:
-      SYNAPSE_SERVER_NAME: ${SERVER_NAME:-home.local}
-      SYNAPSE_REPORT_STATS: "no"
     volumes:
       - ./data/synapse:/data
       - ./data/whatsapp:/bridges/whatsapp:ro

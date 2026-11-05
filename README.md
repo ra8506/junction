@@ -21,7 +21,11 @@ every account separate.
 | Ctrl+1…4 | Mail, Calendar, Messages, Accounts |
 | Ctrl+Enter | Send (in compose) |
 
-## Run it
+## Install
+
+Download the latest installer from the repository's **Actions** tab: open the newest successful "Build Windows installer" run and download **Junction-Setup-windows**. The installer is not code-signed yet, so Windows SmartScreen may warn: choose **More info > Run anyway**.
+
+## Run from source (developers)
 
 Requires Node.js 22+.
 
@@ -31,6 +35,12 @@ npm run dev          # launch with hot reload
 npm test             # unit tests
 npm run dist:win     # build the Windows installer into release/
 ```
+
+### Windows troubleshooting
+
+- `git` or `npm` not recognized: install with `winget install --id Git.Git -e` and `winget install --id OpenJS.NodeJS.LTS -e`, then open a new PowerShell window.
+- "running scripts is disabled": use `npm.cmd` instead of `npm`, or run `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned` once.
+- "Electron uninstall": the Electron download was skipped. Run `npm run ensure-electron` (`npm run dev` now does this automatically).
 
 First launch: Accounts > **Try with sample data** to explore with demo accounts, or add real accounts.
 

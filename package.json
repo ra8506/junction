@@ -7,6 +7,9 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
+    "postinstall": "npm run ensure-electron",
+    "ensure-electron": "node scripts/ensure-electron.mjs",
+    "predev": "npm run ensure-electron",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "typecheck": "tsc --noEmit -p tsconfig.json",
