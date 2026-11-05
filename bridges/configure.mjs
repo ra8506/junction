@@ -64,6 +64,16 @@ export function setPermissions(lines, perms) {
   return false;
 }
 
+/** Copies as_token/hs_token from a bridge's registration.yaml into its config (the bridge refuses to start without them). */
+export function syncTokens(configText, registrationText) {
+  const lines = configText.split(/\r?\n/);
+  for (const k of ['as_token', 'hs_token']) {
+    const m = new RegExp(`^${k}:\\s*["']?([^"'\\s]+)`, 'm').exec(registrationText);
+    if (m) setKey(lines, 'appservice', k, m[1]);
+  }
+  return lines.join('\n');
+}
+
 export function configure(text, bridge) {
   const lines = text.split(/\r?\n/);
   const port = getKey(lines, 'appservice', 'port');
@@ -91,8 +101,11 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
       continue;
     }
     copyFileSync(file, `${file}.bak`);
-    writeFileSync(file, configure(readFileSync(file, 'utf8'), b));
-    console.log(`✓ ${b}: configured`);
+    let text = configure(readFileSync(file, 'utf8'), b);
+    const reg = path.join(here, 'data', b, 'registration.yaml');
+    if (existsSync(reg)) text = syncTokens(text, readFileSync(reg, 'utf8'));
+    writeFileSync(file, text);
+    console.log(`✓ ${b}: configured${existsSync(reg) ? ' (tokens synced from registration.yaml)' : ''}`);
   }
 
   // Register the bridges with Synapse.

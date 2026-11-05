@@ -17,6 +17,9 @@ describe('bridges/configure.mjs', () => {
     expect(getKey(lines, 'encryption', 'allow')).toBe('false');
     expect(out).toContain('        "home.local": user\n        "@brian:home.local": admin\n\n# Config for the bridge');
     expect(out).not.toContain('example.com": user');
+    const synced = (await import('../bridges/configure.mjs')).syncTokens(out, 'id: whatsapp\nas_token: abc123\nhs_token: "def456"\n');
+    expect(getKey(synced.split('\n'), 'appservice', 'as_token')).toBe('abc123');
+    expect(getKey(synced.split('\n'), 'appservice', 'hs_token')).toBe('def456');
     // idempotent
     expect(configure(out, 'whatsapp')).toBe(out);
   });
