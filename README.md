@@ -21,7 +21,11 @@ every account separate.
 | Ctrl+1…4 | Mail, Calendar, Messages, Accounts |
 | Ctrl+Enter | Send (in compose) |
 
-## Run it
+## Install
+
+Download the latest installer from the repository's **Actions** tab: open the newest successful "Build Windows installer" run and download **Junction-Setup-windows**. The installer is not code-signed yet, so Windows SmartScreen may warn: choose **More info > Run anyway**.
+
+## Run from source (developers)
 
 Requires Node.js 22+.
 

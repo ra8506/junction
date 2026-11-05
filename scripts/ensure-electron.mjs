@@ -5,7 +5,7 @@
 // release zip directly and unpack it with the OS's own tools.
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -16,12 +16,31 @@ const { version } = require('electron/package.json');
 const exe = { win32: 'electron.exe', darwin: 'Electron.app/Contents/MacOS/Electron' }[process.platform] ?? 'electron';
 const dist = path.join(electronDir, 'dist');
 const installed = () => existsSync(path.join(dist, exe));
+const pathFile = path.join(electronDir, 'path.txt');
 
-if (installed()) process.exit(0);
+// electron-vite and electron's index.js locate the binary through path.txt, so make
+// sure it names the executable even when the binary was put in place by hand.
+function fixPathFile() {
+  let current = '';
+  try {
+    current = readFileSync(pathFile, 'utf8').replace(/^\uFEFF/, '').trim();
+  } catch {
+    /* missing */
+  }
+  if (current !== exe) writeFileSync(pathFile, exe);
+}
+
+if (installed()) {
+  fixPathFile();
+  process.exit(0);
+}
 
 console.log('Electron binary missing; running Electron installer…');
 spawnSync(process.execPath, [path.join(electronDir, 'install.js')], { stdio: 'inherit', cwd: electronDir });
-if (installed()) process.exit(0);
+if (installed()) {
+  fixPathFile();
+  process.exit(0);
+}
 
 const arch = process.env.npm_config_arch || process.arch;
 const name = `electron-v${version}-${process.platform}-${arch}.zip`;
@@ -45,7 +64,7 @@ if (r.status !== 0) {
   console.error('Unpacking Electron failed.');
   process.exit(1);
 }
-writeFileSync(path.join(electronDir, 'path.txt'), exe);
+fixPathFile();
 if (!existsSync(path.join(dist, 'version'))) writeFileSync(path.join(dist, 'version'), version);
 
 if (!installed()) {
