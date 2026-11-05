@@ -23,7 +23,9 @@ always-on machine (home server, NAS, small VPS) works best; this PC is fine to t
    `docker compose run --rm -e SYNAPSE_SERVER_NAME=%SERVER_NAME% synapse generate`
 3. Start each bridge once so it writes `data/<bridge>/config.yaml`, then stop it:
    `docker compose up whatsapp signal gmessages` then Ctrl+C.
-4. Edit each `data/<bridge>/config.yaml`. The keys are nested YAML sections, so look for the
+4. **Easiest:** run `node configure.mjs home.local brian` (your SERVER_NAME and username). It edits all
+   three bridge configs and registers them in Synapse's `homeserver.yaml` (step 5), keeping a `.bak` copy.
+   Then skip to step 6. To edit by hand instead: edit each `data/<bridge>/config.yaml`. The keys are nested YAML sections, so look for the
    section header (for example `homeserver:`) and change the indented line under it. Replace
    `home.local` with your SERVER_NAME and `whatsapp` with `signal` / `gmessages` for the other bridges:
    ```yaml
