@@ -23,11 +23,33 @@ always-on machine (home server, NAS, small VPS) works best; this PC is fine to t
    `docker compose run --rm -e SYNAPSE_SERVER_NAME=%SERVER_NAME% synapse generate`
 3. Start each bridge once so it writes `data/<bridge>/config.yaml`, then stop it:
    `docker compose up whatsapp signal gmessages` then Ctrl+C.
-4. In each `data/<bridge>/config.yaml` set:
-   - `homeserver.address: http://synapse:8008` and `homeserver.domain: <SERVER_NAME>`
-   - `appservice.address: http://<bridge>:29318` (use the port already in the file; the service name is `whatsapp`, `signal` or `gmessages`)
-   - `bridge.permissions: { "<SERVER_NAME>": user, "@brian:<SERVER_NAME>": admin }`
-   - leave `encryption.allow: false` for now (Junction's MVP client does not do end-to-end encryption between the bridge and the app; the bridge still talks to WhatsApp/Signal with their normal encryption).
+4. Edit each `data/<bridge>/config.yaml`. The keys are nested YAML sections, so look for the
+   section header (for example `homeserver:`) and change the indented line under it. Replace
+   `home.local` with your SERVER_NAME and `whatsapp` with `signal` / `gmessages` for the other bridges:
+   ```yaml
+   bridge:
+       permissions:
+           "home.local": user
+           "@brian:home.local": admin
+
+   database:
+       type: sqlite3-fk-wal
+       uri: file:/data/bridge.db?_txlock=immediate
+
+   homeserver:
+       address: http://synapse:8008
+       domain: home.local
+
+   appservice:
+       address: http://whatsapp:29318   # keep the port number that is already on the `port:` line below
+       hostname: 0.0.0.0
+
+   encryption:
+       allow: false
+   ```
+   (`encryption:` is near the bottom of the file; `allow: false` is already the default, just leave it.
+   Junction's MVP client does not do end-to-end encryption between the bridge and the app; the
+   bridge still talks to WhatsApp/Signal with their normal encryption.)
    Start the bridge again so it writes `data/<bridge>/registration.yaml`.
 5. Add the registrations to `data/synapse/homeserver.yaml`:
    ```yaml
