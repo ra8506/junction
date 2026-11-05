@@ -55,7 +55,7 @@ Replies and new events default to the account the item came from.
 A Matrix client in the main process talks to a homeserver the user controls, where
 mautrix bridges connect WhatsApp, Signal and Google Messages (see BRIDGES.md). Rooms are
 labelled by network from the bridge's `m.bridge` state event. Connecting a network opens
-a DM with the bridge bot and sends `login`; the bot replies with a pairing QR code that
+a DM with the bridge bot and sends `login qr`; the bot replies with a pairing QR code that
 renders in the chat.
 
 This is the same architecture Beeper uses, without depending on Beeper's service.

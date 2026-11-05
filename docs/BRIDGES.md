@@ -63,7 +63,7 @@ always-on machine (home server, NAS, small VPS) works best; this PC is fine to t
 6. `docker compose up -d`, then create your user:
    `docker compose exec synapse register_new_matrix_user -c /data/homeserver.yaml http://localhost:8008 -u brian -a`
 7. In Junction > Messages, sign in to `http://localhost:8008` as that user.
-8. Click **+ WhatsApp**, **+ Signal** or **+ Google Messages**. Junction opens a chat with the bridge bot and sends `login`; the bot replies with a QR code:
+8. Click **+ WhatsApp**, **+ Signal** or **+ Google Messages**. Junction opens a chat with the bridge bot and sends `login qr`; the bot replies with a QR code:
    - WhatsApp: phone > Settings > Linked devices > Link a device.
    - Signal: phone > Settings > Linked devices > (+).
    - Google Messages: phone > Messages > profile > Device pairing > QR code scanner.

@@ -214,7 +214,8 @@ class MatrixService {
       this.rooms.set(roomId, room);
       await new Promise((r) => setTimeout(r, 1500)); // give the bot a moment to join
     }
-    await this.send(roomId, 'login');
+    // bridgev2 bots offer several login flows; all three support "qr".
+    await this.send(roomId, 'login qr');
     this.emit();
     return roomId;
   }
